@@ -44,7 +44,7 @@ class Player:
             play_trick(player_trick, table, self.hand, self.capture_pile)
 
             if table.num_cards() == 0:
-                if player.hand.num_cards() >= 0 or opponent.hand.num_cards() >= 0:
+                if self.hand.num_cards() >= 0 or opponent.hand.num_cards() >= 0:
                     self.scopas += 1
 
         elif self.type == "comp":
