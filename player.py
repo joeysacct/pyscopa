@@ -28,22 +28,19 @@ class Player:
 
     def return_cards_to_deck(self, main_deck: Deck):
         for player_deck in (self.hand, self.capture_pile):
-            for n in range(player_deck.num_cards()):
-                player_deck.deal(main_deck, 0)
+            player_deck.deal_all(main_deck)
 
 
     def run_scopa_turn(self, stdcsr, table: Deck, opponent):
         if self.type == 'player':
             options = get_tricks(self.hand, table)
-            tricks = []
-            for o in options:
-                tricks.append(trick_prompt(o))
+            tricks = [trick_prompt(o) for o in options]
             prompt = "Select a trick/discard from the list:"
 
             player_trick = render_screen(stdcsr, self, opponent, table, tricks, prompt, options)
             play_trick(player_trick, table, self.hand, self.capture_pile)
 
-            if table.num_cards() == 0:
+            if player_trick[2]: # if scopa
                 if self.hand.num_cards() >= 0 or opponent.hand.num_cards() >= 0:
                     self.scopas += 1
 
@@ -52,13 +49,11 @@ class Player:
             comp_trick = play_comp_trick(comp_tricks, table, self.hand, self.capture_pile)
             tricks = ["Continue Game"]
 
-            scopacheck = ""
-            if table.num_cards() == 0:
+            if comp_trick[2]: # if scopa
                 if self.hand.num_cards() >= 0 or opponent.hand.num_cards() >= 0:
                     self.scopas += 1
-                    scopacheck = "Scopa!"
 
-            prompt = f"COMP played {trick_prompt(comp_trick)}. {scopacheck}"
+            prompt = f"COMP played {trick_prompt(comp_trick)}"
             options = ['Continue Game']
 
             _ = render_screen(stdcsr, opponent, self, table, tricks, prompt, options) # flipped to keep parity when playing solo.

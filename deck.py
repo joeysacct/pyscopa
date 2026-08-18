@@ -48,9 +48,14 @@ class Deck:
     def deal_from_top(self, recipient_deck, n_cards):
         for n in range(n_cards):
             if self.num_cards() == 0:
-                raise ValueError(f"{self.cards}")
+                continue
             card = self.cards.pop(0)
             recipient_deck.add_card(card)
+
+
+    def deal_card(self, recipient_deck, card):
+        card_idx = self.card_idx_from_s_v(card.suit,card.value)
+        self.deal(recipient_deck, card_idx)
 
 
     def deal(self, recipient_deck, card_idx):

@@ -47,8 +47,6 @@ def run_scopa(stdcsr):
 
             current_player.run_scopa_turn(stdcsr, table, next_player)
 
-            current_player = next_player # pass turn
-
             # deal a new hand of cards when needed
             if sum([p.hand.num_cards() for p in players]) == 0: #if all players are out of cards
                 if deck.num_cards() < 3*len(players): # end round when no cards remain
