@@ -48,13 +48,15 @@ def get_tricks(hand, table):
     # if no direct captures, test for combo captures. return that list.
     combo_captures = []
     for card in hand.cards:
+        # print(value_lookup[card.value])
         for r in range(2, table.num_cards() + 1):
             unique_combos = combinations(table.cards, r)
             for combo in unique_combos:
                 sum_value = 0
-                for card in combo:
-                    sum_value += value_lookup[card.value]
+                # print([value_lookup[c.value] for c in combo])
+                sum_value = sum([value_lookup[c.value] for c in combo])
                 if sum_value == value_lookup[card.value]:
+                    # print("Combo found!")
                     combo_captures.append([card.suit, card.value, [(c.suit, c.value) for c in combo]])
 
     if len(combo_captures) > 0:
@@ -87,3 +89,20 @@ def play_comp_trick(tricks, table, comp_hand, comp_pile):
     play_trick(trick, table, comp_hand, comp_pile)
     return trick
 
+
+if __name__ == "__main__":
+    deck = Deck()
+    hand = Deck()
+    hand.add_card(Card(0,"Coins","o","5"))
+    deck.add_card(Card(0,"Swords","o","2"))
+    deck.add_card(Card(0,"Batons","o","3"))
+    deck.add_card(Card(0,"Coins","o","3"))
+    deck.add_card(Card(0,"Cups","o","6"))
+    deck.add_card(Card(0,"Coins","o","J"))
+
+    tricks = get_tricks(hand, deck) # Test to get multi-card tricks
+    print(tricks)
+
+
+
+    

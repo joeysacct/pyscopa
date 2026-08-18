@@ -55,7 +55,7 @@ class Player:
             scopacheck = ""
             if table.num_cards() == 0:
                 if self.hand.num_cards() >= 0 or opponent.hand.num_cards() >= 0:
-                    comp_scopas += 1
+                    self.scopas += 1
                     scopacheck = "Scopa!"
 
             prompt = f"COMP played {trick_prompt(comp_trick)}. {scopacheck}"

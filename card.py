@@ -4,12 +4,11 @@ import numpy as np
 
 
 class Card():
-    def __init__(self, chrset, suit, suit_chr, value, owner="Deck"):
+    def __init__(self, chrset, suit, suit_chr, value):
         self.suit = suit
         self.value = value
         self.suit_chr = suit_chr
         self.chrset = chrset
-        self.owner = owner
 
         suit_color = { # color pairs. see main.py for pairs
                 "Coins": 7, # yellow
