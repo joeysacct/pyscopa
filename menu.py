@@ -29,7 +29,7 @@ def render_screen(stdcsr, player, comp, table, tricks, prompt: str, options: dic
     for card in comp.hand.cards:
         card_y = screen_margin
         for line in card.card_image(back=True):
-            stdcsr.addstr(card_y, card_x, line)
+            stdcsr.addstr(card_y, card_x, line, curses.color_pair(5))
             card_y += 1
         card_x += stepsize
 
@@ -44,7 +44,7 @@ def render_screen(stdcsr, player, comp, table, tricks, prompt: str, options: dic
         card_x = card_x_init + stepsize * (n % grid_width)
 
         for line in card.card_image():
-            stdcsr.addstr(card_y, card_x, line)
+            stdcsr.addstr(card_y, card_x, line, curses.color_pair(card.color))
             card_y += 1
 
     # render player hand
@@ -58,7 +58,7 @@ def render_screen(stdcsr, player, comp, table, tricks, prompt: str, options: dic
     for card in player.hand.cards:
         card_y = screen_margin + 3* stepsize
         for line in card.card_image():
-            stdcsr.addstr(card_y, card_x, line)
+            stdcsr.addstr(card_y, card_x, line, curses.color_pair(card.color))
             card_y += 1
         card_x += stepsize
    
@@ -76,8 +76,8 @@ def render_screen(stdcsr, player, comp, table, tricks, prompt: str, options: dic
                 stdcsr.addstr(h,w,"|")
 
     # render labels
-    lbl = f"Player - Score: {player.score}, Opponent - Score: {comp.score}"
-    stdcsr.addstr(0, (screen_width - len(lbl))//2, lbl)
+    lbl = f" Player - Score: {player.score}, Opponent - Score: {comp.score} "
+    stdcsr.addstr(0, (screen_width - len(lbl))//2, lbl, curses.color_pair(2))
 
 
     # render player prompt
@@ -96,12 +96,13 @@ def render_screen(stdcsr, player, comp, table, tricks, prompt: str, options: dic
     while True:
         for i, label in enumerate(tricks):
             marker = ">" if i == idx else " "
-            stdcsr.addstr(prompt_y+i+1,prompt_x, f"{marker} {label}")
+            color = 2 if i == idx else 6
+            stdcsr.addstr(prompt_y+i+1,prompt_x, f"{marker} {label}", curses.color_pair(color))
 
         key = stdcsr.getch()
-        if key == curses.KEY_UP:
+        if key == curses.KEY_UP and len(keys) > 1:
             idx = (idx - 1) % len(keys)
-        elif key == curses.KEY_DOWN:
+        elif key == curses.KEY_DOWN and len(keys) > 1:
             idx = (idx + 1) % len(keys)
         elif key in (curses.KEY_ENTER, ord("\n")):
             label = keys[idx]

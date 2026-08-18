@@ -50,7 +50,6 @@ class Player:
         elif self.type == "comp":
             comp_tricks = get_tricks(self.hand, table)
             comp_trick = play_comp_trick(comp_tricks, table, self.hand, self.capture_pile)
-            t_str = trick_prompt(comp_trick)
             tricks = ["Continue Game"]
 
             scopacheck = ""
@@ -59,7 +58,7 @@ class Player:
                     comp_scopas += 1
                     scopacheck = "Scopa!"
 
-            prompt = f"COMP played {t_str}. {scopacheck}"
-            options = 'Continue Game'
+            prompt = f"COMP played {trick_prompt(comp_trick)}. {scopacheck}"
+            options = ['Continue Game']
 
             _ = render_screen(stdcsr, opponent, self, table, tricks, prompt, options) # flipped to keep parity when playing solo.

@@ -11,6 +11,14 @@ class Card():
         self.chrset = chrset
         self.owner = owner
 
+        suit_color = { # color pairs. see main.py for pairs
+                "Coins": 7, # yellow
+                "Swords": 1, # blue
+                "Batons": 3, # green
+                "Cups": 4 # magenta
+                }
+        self.color = suit_color[suit]
+
     def name(self):
         return f"{self.value} of {self.suit}"
 
