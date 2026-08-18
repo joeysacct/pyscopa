@@ -70,7 +70,7 @@ def score_piles(player_pile, comp_pile, player_scopas, comp_scopas, player_score
     comp_primiera = 0
     for suit in suits:
        highest_player_card = max((card for card in player_pile.cards if card.suit == suit), key=lambda card: primiera_values[card.value_chr], default=0)
-       highest_comp_card = max((card for card in comp_pile.cards if card.suit == suit), key=lambda card: primiera_values[card.value_chr])
+       highest_comp_card = max((card for card in comp_pile.cards if card.suit == suit), key=lambda card: primiera_values[card.value_chr], default=0)
        player_primiera += primiera_values[highest_player_card.value_chr]
        comp_primiera += primiera_values[highest_comp_card.value_chr]
 
