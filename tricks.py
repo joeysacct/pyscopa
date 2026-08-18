@@ -23,6 +23,16 @@ value_lookup = {
     "K": 99999
 }
 
+def trick_prompt(trick):
+    suit = trick[0]
+    value = trick[1]
+    table_cards_data = trick[2]
+    hand_card = value + " of " + suit
+    if len(table_cards_data) == 0:  #discard
+        return "Discard " + hand_card
+    table_cards = [value + " of " + suit for suit, value in trick[2]]
+    return hand_card + "<=>" + "+".join(table_cards)
+
 def get_tricks(hand, table):
    # check for direct captures
     direct_captures = []
@@ -43,8 +53,8 @@ def get_tricks(hand, table):
             for combo in unique_combos:
                 sum_value = 0
                 for card in combo:
-                    sum_value += value_lookup[card.value_chr]
-                if sum_value == value_lookup[card.value_chr]:
+                    sum_value += value_lookup[card.value]
+                if sum_value == value_lookup[card.value]:
                     combo_captures.append([card.suit, card.value, [(c.suit, c.value) for c in combo]])
 
     if len(combo_captures) > 0:

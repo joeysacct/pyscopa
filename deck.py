@@ -2,8 +2,28 @@ from card import Card
 import random
 
 class Deck:
+
+
     def __init__(self):
         self.cards = []
+        self.PIPE_SETS = [
+            "┃━┏┓┗┛",
+            "│─╭╮╰╯",
+            "│─┌┐└┘",
+            "║═╔╗╚╝",
+            "╿╼┍┑┕┚",
+        ]
+
+
+    def populate_deck(self,
+                      suits=[ "Coins", "Cups", "Swords", "Batons" ],
+                      suit_chrs=["o", "U", "?", "!"],
+                      values=[ "A", "2", "3", "4", "5", "6", "7", "J", "Q", "K" ],
+                      pipe_set=3):
+        for s, sc in zip(suits, suit_chrs):
+            for v in values:
+                card = Card(self.PIPE_SETS[pipe_set], s, sc, v)
+                self.add_card(card)
 
 
     def add_card(self, card):
@@ -42,3 +62,16 @@ class Deck:
         for n in range(self.num_cards()):
             card = self.cards.pop(0)
             recipient_deck.add_card(card)
+
+
+
+    def has_card(self, suit, value):
+        return any(card.suit == suit and card.value == value for card in self.cards)
+
+
+    def cards_with_suit(self,suit):
+        return [c for c in self.cards if c.suit == suit]
+
+
+    def cards_with_value(self, value):
+        return [c for c in self.cards if c.value == value]

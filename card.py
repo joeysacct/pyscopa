@@ -4,11 +4,10 @@ import numpy as np
 
 
 class Card():
-    def __init__(self, chrset, suit, suit_chr, value, value_chr, owner="Deck"):
+    def __init__(self, chrset, suit, suit_chr, value, owner="Deck"):
         self.suit = suit
         self.value = value
         self.suit_chr = suit_chr
-        self.value_chr = value_chr
         self.chrset = chrset
         self.owner = owner
 
@@ -17,7 +16,7 @@ class Card():
 
     def card_image(self, back=False):
         card_txt = []
-        corner_txt = self.value_chr + self.suit_chr
+        corner_txt = self.value + self.suit_chr
         card_txt.append(self.chrset[2] + self.chrset[1] * 5 + self.chrset[3])      # '┏━━━━━┓'
         if back:
             for line in self.get_card_deco(back):
@@ -72,7 +71,7 @@ class Card():
                 "}}:{{",
                 "\\ ~ /",
             ]
-        return decos[self.value_chr]
+        return decos[self.value]
 
 
 PIPE_SETS = [

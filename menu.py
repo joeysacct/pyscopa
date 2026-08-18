@@ -5,7 +5,7 @@ from card import Card
 from deck import Deck
 
 
-def render_screen(stdcsr, player_hand, comp_hand, table, tricks, prompt: str, options: dict, player_score, comp_score):
+def render_screen(stdcsr, player, comp, table, tricks, prompt: str, options: dict):
     idx = 0
     keys = options
     curses.curs_set(0)
@@ -15,33 +15,18 @@ def render_screen(stdcsr, player_hand, comp_hand, table, tricks, prompt: str, op
 
     card_height = 7
     card_length = 7
-    screen_margin = 2
-
-    # render player hand
-    if player_hand.num_cards() * (card_length+1) > screen_width: # compact view
-        stepsize = 3 # needed for |SN on side of card
-    else: # full view
-        stepsize = card_length+1
-
-    card_x = screen_width//2 - stepsize*player_hand.num_cards() + card_length//2
-
-    for card in player_hand.cards:
-        card_y = screen_height - screen_margin - card_height
-        for line in card.card_image():
-            stdcsr.addstr(card_y, card_x, line)
-            card_y += 1
-        card_x += stepsize
-    
+    screen_margin = 1
+ 
 
     # render comp hand
-    if comp_hand.num_cards() * (card_length+1) > screen_width: # compact view
+    if comp.hand.num_cards() * (card_length+1) > screen_width: # compact view
         stepsize = 3 # needed for |SN on side of card
     else: # full view
         stepsize = card_length+1
 
-    card_x = screen_width//2 - stepsize*comp_hand.num_cards() + card_length//2
+    card_x = screen_margin + stepsize
 
-    for card in comp_hand.cards:
+    for card in comp.hand.cards:
         card_y = screen_margin
         for line in card.card_image(back=True):
             stdcsr.addstr(card_y, card_x, line)
@@ -50,48 +35,68 @@ def render_screen(stdcsr, player_hand, comp_hand, table, tricks, prompt: str, op
 
 
     # render table - 5x2 grid
-    stepsize = 8
+    stepsize = card_length+1
     grid_width = 5
-    card_x_init = screen_width//2 - (stepsize*grid_width//2) + card_length//2
+    card_x_init = screen_margin
 
     for n, card in enumerate(table.cards):
-        card_y = screen_height//2 + card_height * (n//grid_width - 1) # n//5 to add to next row
+        card_y = screen_margin + 2*stepsize + card_height * (n//grid_width - 1)-1 # n//5 to add to next row
         card_x = card_x_init + stepsize * (n % grid_width)
 
         for line in card.card_image():
             stdcsr.addstr(card_y, card_x, line)
             card_y += 1
 
-    
-    # render player tricks
-    # n_tricks = len(tricks)
-    # stdcsr.addstr(screen_height//2 - n_tricks+8, screen_margin, "Available Tricks:")
-    # stdcsr.addstr(screen_height//2 - n_tricks+9, screen_margin, "-----------------")
-    # for i,trick in enumerate(tricks):
-    #     # t_str = f"{trick[0]}{trick[1]}, "
-    #     # for t in trick[2]:
-    #     #     # raise ValueError(f"{t}")
-    #     #     t_str = t_str + f"{t[0]}{t[1]}, "
-    #     stdcsr.addstr(screen_height//2 - n_tricks+i+10, screen_margin,trick)
+    # render player hand
+    if player.hand.num_cards() * (card_length+1) > screen_width: # compact view
+        stepsize = 3 # needed for |SN on side of card
+    else: # full view
+        stepsize = card_length+1
 
+    card_x = screen_margin + stepsize
+
+    for card in player.hand.cards:
+        card_y = screen_margin + 3* stepsize
+        for line in card.card_image():
+            stdcsr.addstr(card_y, card_x, line)
+            card_y += 1
+        card_x += stepsize
    
+    # render dividers
+    stepsize = card_height + 1
+    y_stops = [0, screen_margin + card_height, screen_margin + 2*stepsize+card_height, screen_margin + 3*stepsize + card_height ]
+    x_stops = [0, screen_margin + 5*stepsize]
+    for w in range(screen_width):
+        for h in range(screen_height):
+            if h in y_stops and w in x_stops:
+                stdcsr.addstr(h,w,"+")
+            elif h in y_stops:
+                stdcsr.addstr(h,w,"-")
+            elif w in x_stops:
+                stdcsr.addstr(h,w,"|")
+
+    # render labels
+    lbl = f"Player - Score: {player.score}, Opponent - Score: {comp.score}"
+    stdcsr.addstr(0, (screen_width - len(lbl))//2, lbl)
+
+
     # render player prompt
     if len(keys) < 1:
         return ""
-    longest_label = max(map(len, "\n".split(prompt))) + 1
-    prompt_x = screen_margin 
-    prompt_y = screen_height//2 + 10
-    try:
-        stdcsr.addstr(prompt_y-1,prompt_x,prompt)
-    except:
-        raise ValueError(f"{prompt}\n{prompt_y}\n{prompt_x}")
-    prompt_y += prompt.count("\n")
+    prompt_x = screen_margin + 5*stepsize + 1
+    prompt_y = screen_margin + stepsize
+    for subprompt in prompt.split("\n"):
+        try:
+            stdcsr.addstr(prompt_y,prompt_x,subprompt)
+        except:
+            raise ValueError(f"{prompt}\n{prompt_y}\n{prompt_x}")
+        prompt_y += 1
 
     # render and wait for options
     while True:
         for i, label in enumerate(tricks):
             marker = ">" if i == idx else " "
-            stdcsr.addstr(prompt_y+i+2,prompt_x, f"{marker} {label}")
+            stdcsr.addstr(prompt_y+i+1,prompt_x, f"{marker} {label}")
 
         key = stdcsr.getch()
         if key == curses.KEY_UP:
